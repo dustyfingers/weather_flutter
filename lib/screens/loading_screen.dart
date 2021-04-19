@@ -14,6 +14,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
     print(position);
   }
 
+  // initState gets called once when the widget renders
+  @override
+  void initState() {
+    super.initState();
+    getLocation();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,4 +34,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
       ),
     );
   }
+
+  // deactivate() gets called once the widget is 'destroyed'
 }
