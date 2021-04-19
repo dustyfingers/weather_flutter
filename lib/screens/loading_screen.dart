@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:weather_flutter/services/location.dart';
+import 'package:weather_flutter/services/networking.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -11,18 +10,22 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  String apiKey = env['OPEN_WEATHER_MAP_API_KEY'];
+  double latitude = 0.00;
+  double longitude = 0.00;
 
-  void getLocation() async {
+  void getLocationData() async {
     Location location = Location();
     await location.getCurrentLocation();
-  }
+    latitude = location.lat;
+    longitude = location.long;
 
-  void getWeatherData() async {
-    Uri uri = Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?q=Oakland&appid=$apiKey');
-    http.Response res = await http.get(uri);
-    print(res.body);
+    NetworkingHelper nwHelper = NetworkingHelper(
+        'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude');
+
+    // print(data);
+    // double temp = decodedData['main']['temp'];
+    // int condition = decodedData['weather'][0]['id'];
+    // String cityName = decodedData['name'];
   }
 
   // initState gets called once when the widget renders
@@ -31,7 +34,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     super.initState();
     // load environment variables
     dotenv.load();
-    getLocation();
+    getLocationData();
   }
 
   @override
@@ -40,7 +43,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       body: Center(
         child: RaisedButton(
           onPressed: () {
-            getWeatherData();
+            getLocationData();
           },
           child: Text('Get Location'),
         ),
