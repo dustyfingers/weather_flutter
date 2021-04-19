@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:weather_flutter/services/location.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -8,10 +8,12 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   void getLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.low,
-        forceAndroidLocationManager: true);
-    print(position);
+    // create instance of location obj and call getLocation method on that obj
+    Location location = Location();
+    await location.getCurrentLocation();
+
+    print(location.lat);
+    print(location.long);
   }
 
   // initState gets called once when the widget renders
