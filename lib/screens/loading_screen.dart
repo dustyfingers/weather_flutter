@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:weather_flutter/services/location.dart';
 import 'package:weather_flutter/services/networking.dart';
+
+import 'package:weather_flutter/screens/location_screen.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -10,22 +13,19 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  double latitude = 0.00;
-  double longitude = 0.00;
-
   void getLocationData() async {
     Location location = Location();
     await location.getCurrentLocation();
-    latitude = location.lat;
-    longitude = location.long;
 
     NetworkingHelper nwHelper = NetworkingHelper(
-        'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude');
+        'https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.long}&units=imperial');
 
-    // print(data);
-    // double temp = decodedData['main']['temp'];
-    // int condition = decodedData['weather'][0]['id'];
-    // String cityName = decodedData['name'];
+    var weatherData = await nwHelper.getWeatherData();
+
+    // redirect to locatino screen
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return LocationScreen(locationWeather: weatherData);
+    }));
   }
 
   // initState gets called once when the widget renders
@@ -41,12 +41,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            getLocationData();
-          },
-          child: Text('Get Location'),
-        ),
+        child: SpinKitRing(color: Colors.white, size: 100.0),
       ),
     );
   }
