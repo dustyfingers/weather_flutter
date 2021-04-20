@@ -13,8 +13,9 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  // state
   WeatherModel weatherModel = WeatherModel();
+
+  // state
   int temp;
   String weatherIcon;
   String weatherMessage;
@@ -31,10 +32,21 @@ class _LocationScreenState extends State<LocationScreen> {
     double dTemp = weatherData['main']['temp'];
     temp = dTemp.toInt();
     int condition = weatherData['weather'][0]['id'];
-    cityName = weatherData['name'];
+    // when changing the state,
+    // wrap in setState!!
+    setState(() {
+      if (weatherData == null) {
+        temp = 0;
+        weatherIcon = 'Error';
+        weatherMessage = 'Unable to fetch weather data.';
+        cityName = '';
+        return;
+      }
 
-    weatherIcon = weatherModel.getWeatherIcon(condition);
-    weatherMessage = weatherModel.getMessage(temp);
+      cityName = weatherData['name'];
+      weatherIcon = weatherModel.getWeatherIcon(condition);
+      weatherMessage = weatherModel.getMessage(temp);
+    });
   }
 
   @override
@@ -59,7 +71,10 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var weatherData = await weatherModel.getLocationWeather();
+                      updateUI(weatherData);
+                    },
                     child: Icon(
                       Icons.near_me,
                       size: 50.0,
@@ -92,7 +107,7 @@ class _LocationScreenState extends State<LocationScreen> {
               Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Text(
-                  "$weatherMessage in $cityName!",
+                  '$weatherMessage in $cityName!',
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
                 ),
