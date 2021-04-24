@@ -19,6 +19,14 @@ class WeatherModel {
     return weatherData;
   }
 
+  Future<dynamic> getGivenCityWeather(String cityName) async {
+    NetworkingHelper nwHelper = NetworkingHelper(
+        '$_openWeatherMapUrl?q=$cityName&units=imperial&appid=$_apiKey');
+
+    var weatherData = await nwHelper.getWeatherData();
+    return weatherData;
+  }
+
   String getWeatherIcon(int condition) {
     if (condition < 300) {
       return '🌩';
